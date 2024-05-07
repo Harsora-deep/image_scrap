@@ -8,6 +8,22 @@ import pymongo
 logging.basicConfig(filename="scrapper.log" , level=logging.INFO)
 import os
 
+
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+
+uri = "mongodb+srv://Deep:Mongo12.@cluster0.fzpbpri.mongodb.net/?retryWrites=true&w=majority"
+
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
+
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
+
 app = Flask(__name__)
 
 @app.route("/", methods = ['GET'])
@@ -58,12 +74,12 @@ def index():
                                 img_data.append(mydict)
                                 with open(os.path.join(save_directory, f"{query}_{image_tags.index(image_tag)}.jpg"), "wb") as f:
                                     f.write(image_data)
-                    client = pymongo.MongoClient("mongodb+srv://snshrivas:Snshrivas@cluster0.ln0bt5m.mongodb.net/?retryWrites=true&w=majority")
+                    
                     db = client['image_scrap']
                     review_col = db['image_scrap_data']
                     review_col.insert_many(img_data)          
 
-                    return "image laoded"
+                    return "image loaded"
                 except Exception as e:
                     logging.info(e)
                     return 'something is wrong'
